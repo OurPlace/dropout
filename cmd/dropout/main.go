@@ -39,6 +39,7 @@ func run(ctx context.Context) error {
 
 	// If we failed to ping.
 	if !ping {
+		fmt.Println("Ping failed, reporting to the database.")
 		// Report dropout.
 		if err = db.ReportDropout(ctx); err != nil {
 			return fmt.Errorf("Failed to store dropout: %w", err)

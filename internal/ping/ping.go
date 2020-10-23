@@ -2,7 +2,11 @@ package ping
 
 import (
 	"context"
+	"fmt"
+	"time"
 
+	// We're going to use go-ping/ping to save time.
+	"github.com/go-ping/ping"
 	"github.com/ourplace/dropout/internal/settings"
 )
 
@@ -28,6 +32,25 @@ func Perform(ctx context.Context, config settings.Ping) (bool, error) {
 // pingIP will attempt to Ping the address. Not being able to find the route to
 // host is not considered an error, but a failure to Ping.
 func pingIP(ctx context.Context, config settings.Ping, location string) (successful bool, err error) {
+	pinger, err := ping.NewPinger("8.8.8.8")
+	if err != nil {
+		return false, err
+	}
 
-	return false, nil
+	pinger.Count = 1
+	pinger.Timeout = 1 * time.Second
+
+	if err := pinger.Run(); err != nil {
+		return false, err
+	}
+
+	stats := pinger.Statistics()
+
+	fmt.Printf("Ping took %s\n", stats.MaxRtt)
+
+	if stats.PacketsRecv != 1 {
+		return false, nil
+	}
+
+	return true, nil
 }
