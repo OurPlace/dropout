@@ -3,7 +3,6 @@ package ping
 import (
 	"context"
 	"fmt"
-	"time"
 
 	// We're going to use go-ping/ping to save time.
 	"github.com/go-ping/ping"
@@ -32,13 +31,14 @@ func Perform(ctx context.Context, config settings.Ping) (bool, error) {
 // pingIP will attempt to Ping the address. Not being able to find the route to
 // host is not considered an error, but a failure to Ping.
 func pingIP(ctx context.Context, config settings.Ping, location string) (successful bool, err error) {
-	pinger, err := ping.NewPinger("8.8.8.8")
+	pinger, err := ping.NewPinger(location)
 	if err != nil {
 		return false, err
 	}
 
 	pinger.Count = 1
-	pinger.Timeout = 1 * time.Second
+	pinger.Timeout = config.Timeout
+	pinger.SetPrivileged(config.Privileged)
 
 	if err := pinger.Run(); err != nil {
 		return false, err
