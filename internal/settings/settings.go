@@ -2,6 +2,7 @@ package settings
 
 import (
 	"os"
+	"time"
 
 	"github.com/joho/godotenv"
 	"github.com/kelseyhightower/envconfig"
@@ -22,7 +23,9 @@ type Database struct {
 
 // Ping holds onto the Ping specific configurations.
 type Ping struct {
-	Locations []string `json:"locations"`
+	Locations  []string      `json:"locations"`
+	Timeout    time.Duration `json:"timeout"`
+	Privileged bool          `json:"privileged"`
 }
 
 // Load loads the settings.
