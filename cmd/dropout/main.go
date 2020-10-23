@@ -37,13 +37,15 @@ func run(ctx context.Context) error {
 		return fmt.Errorf("Failed to perform ping: %w", err)
 	}
 
-	// If we failed to ping.
-	if !ping {
-		fmt.Println("Ping failed, reporting to the database.")
-		// Report dropout.
-		if err = db.ReportDropout(ctx); err != nil {
-			return fmt.Errorf("Failed to store dropout: %w", err)
-		}
+	// Exit if the ping was successful
+	if ping {
+		return nil
+	}
+
+	fmt.Println("Ping failed, reporting to the database.")
+	// Report dropout.
+	if err = db.ReportDropout(ctx); err != nil {
+		return fmt.Errorf("Failed to store dropout: %w", err)
 	}
 
 	return nil
